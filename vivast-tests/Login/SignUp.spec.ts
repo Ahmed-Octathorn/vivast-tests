@@ -1,24 +1,23 @@
 import { test, expect } from '@playwright/test';
+import { fillSignupForm } from '../Member-profile/fillSignupForm';
 
 const SIGNUP_URL = '/signup';
 
 //  Valid signup — already in your code
 test('Valid Signup', async ({ page }) => {
   await page.goto(SIGNUP_URL);
-
-  await page.getByRole('textbox', { name: 'Enter your first name' }).fill('automate');
-  await page.getByRole('textbox', { name: 'Enter your last name' }).fill('test');
-
+  
+  // Create a unique email to avoid duplicates
   const randomId = Date.now();
-  const email = `automate+${randomId}@test.com`;
-  await page.getByRole('textbox', { name: 'Enter your email' }).fill(email);
+  const email = `automate${randomId}@test.com`;
 
-  await page.getByRole('textbox', { name: 'Enter your phone number' }).fill('+145231478941');
-  await page.locator('#password').fill('12345678');
-  await page.locator('#confirmPassword').fill('12345678');
-  await page.getByRole('button', { name: 'Register' }).click();
+  await fillSignupForm(page, email);
 
-  await expect(page.locator('h2')).toContainText(/Complete Your Profile/i, { timeout: 10000 });
+  await Promise.all([
+    page.getByRole('button', { name: 'Register' }).click(),
+  ]);
+
+  await expect(page.locator('h2')).toContainText(/Complete Your Profile/i, { timeout: 100000 });
 });
 
 

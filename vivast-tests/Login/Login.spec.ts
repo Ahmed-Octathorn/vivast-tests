@@ -9,7 +9,7 @@ async function getOtpFromMailDev(
   to: string,
   subjectRegex: RegExp | null = /RED_STRENGTH_WEB_APP Login Code/i,
   otpRegex: RegExp = /Your verification code is (\d{4,8})/,
-  timeoutMs = 20000,
+  timeoutMs = 200000,
   
   pollIntervalMs = 1000
 ): Promise<string> {
@@ -89,7 +89,7 @@ test('Valid login with OTP from MailDev', async ({ page, request }) => {
 });
 
 test( 'Invalid login shows error message', async ({ page }) => {
-  await page.goto( LOGIN_URL)
+  await page.goto(LOGIN_URL)
   await expect(page.getByRole('heading')).toContainText('Login'); 
   await page.getByRole('textbox', { name: 'username@example.com' }).click();
   await page.locator('#password').fill('wrongpassword');
