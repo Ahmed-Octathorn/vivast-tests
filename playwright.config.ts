@@ -1,82 +1,73 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
+  // Directory where your test files live
   testDir: './vivast-tests',
-  /* Maximum time one test can run for. */
-  timeout: 80 * 1000,
 
-  /* Run tests in files in parallel */
-  fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
+  // Max test duration (200s to handle slower CI)
+  timeout: 200 * 1000,
+
+  // Run in parallel locally, sequentially in CI
+  fullyParallel: !process.env.CI,
+
+  // Prevent accidental "test.only" commits
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
+
+  // Retry failed tests twice on CI for flakiness
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
+
+  // Use 1 worker on CI to avoid race/network issues
   workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+
+  // Reporters for local + CI (HTML + console)
+  reporter: process.env.CI
+    ? [['line'], ['html', { outputFolder: 'playwright-report' }]]
+    : 'html',
+
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
-    actionTimeout: 50 * 1000,
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: process.env.BASE_URL || 'http://191.101.81.124:4000',
+
+    // Timeouts for actions/navigation
+    actionTimeout: 90 * 1000,
+    navigationTimeout: 60 * 1000,
+
+    // Run headless only on CI
+    headless: !!process.env.CI,
+
+    // Standard viewport
+    viewport: { width: 1280, height: 720 },
+
+    // Screenshots & videos only on failure (useful in CI)
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+
+    // Capture trace on first retry
     trace: 'on-first-retry',
+
+    // Ignore HTTPS errors for non-prod environments
+    ignoreHTTPSErrors: true,
   },
 
-  /* Configure projects for major browsers */
+  // Browser projects
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  // Optional: Run local dev server before tests (if needed)
   // webServer: {
   //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
+  //   url: process.env.BASE_URL || 'http://localhost:4000',
   //   reuseExistingServer: !process.env.CI,
   // },
 });

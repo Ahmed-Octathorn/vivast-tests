@@ -1,29 +1,11 @@
 import { test, expect, Page } from '@playwright/test';
+import { fillSignupForm } from './fillSignupForm';
 
-// Use environment variable for flexibility (staging, prod, etc.)
-const BASE_URL = process.env.BASE_URL || 'http://191.101.81.124:4000';
-const SIGNUP_URL = `${BASE_URL}/signup`;
-
-// ------------------------------
-// Helper function: Fill signup form
-// ------------------------------
-async function fillSignupForm(page: Page, email: string) {
-  await test.step('Fill Basic Signup Information', async () => {
-    await page.getByRole('textbox', { name: 'Enter your first name' }).fill('Automate');
-    await page.getByRole('textbox', { name: 'Enter your last name' }).fill('Test');
-    await page.getByRole('textbox', { name: 'Enter your email' }).fill(email);
-    await page.getByRole('textbox', { name: 'Enter your phone number' }).fill('+145231478941');
-    await page.locator('#password').fill('12345678');
-    await page.locator('#confirmPassword').fill('12345678');
-  });
-}
-
-// ------------------------------
 // TEST: Full Signup Flow
-// ------------------------------
+
 test('Valid Signup Flow - Complete to Dashboard', async ({ page }) => {
   await test.step('Navigate to Signup Page', async () => {
-    await page.goto(SIGNUP_URL);
+    await page.goto(/* SIGNUP_URL */'/signup');
     await expect(page).toHaveURL(/.*signup/);
   });
 
@@ -62,13 +44,6 @@ test('Valid Signup Flow - Complete to Dashboard', async ({ page }) => {
       page.getByRole('button', { name: 'Continue' }).click(),
     ]);
   });
-
-  // ---------- Choose Plan ----------
-  // await test.step('Select Membership Plan', async () => {
-  //   await expect(page.locator('h2')).toContainText('Choose Your Membership Plan');
-  //   await page.getByRole('button', { name: 'Select Plan' }).nth(1).click();
-  //   await page.getByRole('button', { name: 'Next' }).click();
-  // });
 
   // ---------- Choose Plan ----------
   await test.step('Select Random Membership Plan', async () => {

@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
-const SIGNUP_URL = 'http://191.101.81.124:4000/signup';
 
-// ============ TESTS ============ //
+const SIGNUP_URL = '/signup';
 
 //  Valid signup — already in your code
 test('Valid Signup', async ({ page }) => {

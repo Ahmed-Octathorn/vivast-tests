@@ -1,6 +1,6 @@
 import { test, expect, APIRequestContext } from '@playwright/test';
 
-const LOGIN_URL = 'http://191.101.81.124:4000/login';
+const LOGIN_URL = '/login';
 const MAILDEV_API = 'http://191.101.81.124:1080'; // MailDev API endpoint
 
 // Utility: Fetch OTP from MailDev inbox
