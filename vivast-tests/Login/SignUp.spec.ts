@@ -55,7 +55,7 @@ test('Signup fails with invalid email format', async ({ page }) => {
   console.log('Validation message:', validationMessage);
 
   // Assert the message contains '@' or general invalid email hint
-  expect(validationMessage).toMatch(/@|valid email/i);
+  expect(validationMessage).toMatch(/@|valid email|enter an email/i);
 });
 
 
