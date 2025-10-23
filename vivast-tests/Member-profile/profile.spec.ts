@@ -175,16 +175,20 @@ test('Valid Signup Flow Cash Payment - Complete to Dashboard', async ({ page }) 
 
   // ---------- Payment ----------
   await test.step('Enter Payment Details', async () => {
-    await page.locator('div').filter({ hasText: /^Cashcash$/ }).first().click();
+    await page.locator('div').filter({ hasText: /^Cashcash$/ }).nth(1).click();
     await page.getByRole('checkbox', { name: /I have read and accept/i }).check();
 
     await Promise.all([
       page.getByRole('button', { name: 'Continue to Payment' }).click(),
     ]);
-    
-    await page.waitForLoadState("domcontentloaded");
-  });
 
+    await Promise.all([
+      page.waitForSelector('text=Payment Successful', { timeout: 200000 }),
+    ]);
+  });
+  
+  await page.waitForLoadState("domcontentloaded");
+  
   // ---------- Dashboard ----------
   await test.step('Verify Redirect to Dashboard', async () => {
     await expect(page.getByRole('heading')).toContainText('Payment Successful');
