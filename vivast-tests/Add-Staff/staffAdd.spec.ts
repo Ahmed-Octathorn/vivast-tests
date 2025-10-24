@@ -34,6 +34,7 @@ test('Valid Add Staff from admin', async ({ page }) => {
         const randomRole = roles[Math.floor(Math.random() * roles.length)];
         console.log(`Randomly selected role: ${randomRole}`);
         await page.getByRole('button', { name: 'Select roles' }).click();
+        await page.waitForSelector(`div:has-text("${randomRole}")`, { state: 'visible'});
         await page.locator('div', { hasText: new RegExp(`^${randomRole}$`, 'i') }).click();
 
 
