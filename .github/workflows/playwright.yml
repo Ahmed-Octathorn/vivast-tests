@@ -9,7 +9,8 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-
+    env:
+      token: ${{ secrets.TOKEN }} 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
